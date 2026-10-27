@@ -1,0 +1,10 @@
+services:
+  db:
+    image: postgres:17
+    container_name: db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 1111
+      POSTGRES_DB: lesson3
+    ports:
+      - "5432:5432"
