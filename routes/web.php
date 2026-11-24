@@ -31,5 +31,9 @@ Route::put('/castles/{castle}/edit', [CastleController::class, 'update']);
 
 Route::delete('/castles/{castle}', [CastleController::class, 'destroy']);
 
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
+require __DIR__.'/auth.php';
 

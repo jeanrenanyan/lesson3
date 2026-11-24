@@ -29,7 +29,7 @@
         <section class="py-3 py-md-4 py-lg-2">
             <h1 id="sec_header" class="mb-3 mb-md-4 text-center text-lg-start">Список замков Эстонии</h1>
             <div class="container text-left">
-                <div class="row gap-3 align-items-stretch d-flex justify-content-center justify-content-lg-start">
+                <div class="row gap-3 align-items-stretch d-flex justify-content-center">
                     @forelse ($castles as $castle)
                         <div class="col-12 col-md-10 col-lg-5 col-xl-4 col-xxl-3 col-3xl-2">
                             <div class="card">
