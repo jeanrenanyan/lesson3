@@ -10,15 +10,39 @@
     <main class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h2 mb-0">Пользователи</h1>
-            <a class="btn btn-outline-primary" href="{{ route('castles.index') }}">К замкам</a>
+            <div class="d-flex gap-2">
+                @auth
+                    <a class="btn btn-outline-primary" href="{{ route('feed.index') }}">Лента друзей</a>
+                @endauth
+                <a class="btn btn-outline-primary" href="{{ route('castles.index') }}">К замкам</a>
+            </div>
         </div>
         <div class="list-group">
             @forelse ($users as $user)
-                <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                   href="{{ route('users.castles', $user->username) }}">
-                    <span>{{ $user->name }} <span class="text-muted">({{ $user->username }})</span></span>
-                    <span class="btn btn-sm btn-outline-primary">Замки пользователя</span>
-                </a>
+                <div class="list-group-item d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <a href="{{ route('users.castles', $user->username) }}">
+                        {{ $user->name }} <span class="text-muted">({{ $user->username }})</span>
+                    </a>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a class="btn btn-sm btn-outline-primary" href="{{ route('users.castles', $user->username) }}">Замки пользователя</a>
+                        @auth
+                            @if ((int) auth()->id() !== (int) $user->id)
+                                @if (in_array($user->id, $friendIds))
+                                    <form method="POST" action="{{ route('friends.destroy', $user->username) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-outline-danger" type="submit">Удалить из друзей</button>
+                                    </form>
+                                @else
+                                    <form method="POST" action="{{ route('friends.store', $user->username) }}">
+                                        @csrf
+                                        <button class="btn btn-sm btn-success" type="submit">Добавить в друзья</button>
+                                    </form>
+                                @endif
+                            @endif
+                        @endauth
+                    </div>
+                </div>
             @empty
                 <div class="list-group-item text-muted">Пользователи не найдены.</div>
             @endforelse

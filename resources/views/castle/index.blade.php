@@ -23,6 +23,7 @@
                     <div class="d-flex align-items-center gap-2 me-3">
                         <a class="btn btn-outline-primary" href="{{ route('users.index') }}">Пользователи</a>
                         @auth
+                            <a class="btn btn-outline-primary" href="{{ route('feed.index') }}">Лента друзей</a>
                             <a class="btn btn-primary" href="{{ route('castles.create') }}">Добавить замок</a>
                             <span class="text-muted">{{ Auth::user()->name }}</span>
                             <form method="POST" action="{{ route('logout') }}">

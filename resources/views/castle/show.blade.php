@@ -44,6 +44,44 @@
                 </div>
             </div>
         </article>
+
+        <section class="mt-4">
+            <h2 class="h3 mb-3">Комментарии</h2>
+            @if (session('status'))
+                <div class="alert alert-success">{{ session('status') }}</div>
+            @endif
+
+            @auth
+                <form class="comment-form mb-4" method="POST" action="{{ route('comments.store', $castle) }}">
+                    @csrf
+                    <label class="form-label" for="comment-text">Оставить комментарий</label>
+                    <textarea class="form-control" id="comment-text" name="text" rows="3" maxlength="2000" required>{{ old('text') }}</textarea>
+                    @error('text') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                    <button class="btn btn-primary mt-2" type="submit">Отправить</button>
+                </form>
+            @else
+                <p><a href="{{ route('login') }}">Войдите</a>, чтобы оставить комментарий.</p>
+            @endauth
+
+            <div class="d-flex flex-column gap-3">
+                @forelse ($comments as $comment)
+                    <article class="comment-card {{ in_array($comment->user_id, $friendIds) ? 'comment-card--friend' : '' }}">
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <strong>{{ $comment->user->name }}</strong>
+                            <time class="text-muted small" datetime="{{ $comment->created_at->toIso8601String() }}">
+                                {{ $comment->created_at->format('d.m.Y H:i') }}
+                            </time>
+                        </div>
+                        @if (in_array($comment->user_id, $friendIds))
+                            <span class="badge text-bg-primary mt-1">Друг</span>
+                        @endif
+                        <p class="mb-0 mt-2">{{ $comment->text }}</p>
+                    </article>
+                @empty
+                    <p class="text-muted">Комментариев пока нет.</p>
+                @endforelse
+            </div>
+        </section>
     </main>
 </body>
 

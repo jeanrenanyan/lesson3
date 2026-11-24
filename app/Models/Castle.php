@@ -11,8 +11,6 @@ class Castle extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $connection = 'pg_castles';
-
     protected $casts = [
         'created_at' => 'datetime:Y-m-d',
         'updated_at' => 'datetime:Y-m-d',
@@ -40,5 +38,10 @@ class Castle extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 }

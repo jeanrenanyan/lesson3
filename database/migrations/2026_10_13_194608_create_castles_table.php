@@ -7,13 +7,6 @@ use Illuminate\Support\Facades\Schema;
 class CreateCastlesTable extends Migration
 {
     /**
-     * The database connection that should be used by the migration.
-     *
-     * @var string
-     */
-    protected $connection = 'pg_castles';
-
-    /**
      * Run the migrations.
      *
      * @return void

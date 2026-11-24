@@ -24933,6 +24933,26 @@ button:active {
   font-size: 1rem;
 }
 
+.comment-form,
+.comment-card,
+.feed-item,
+.friends-sidebar {
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  background: #fff;
+}
+
+.comment-card--friend {
+  border-color: #86b7fe;
+  background: #eef6ff;
+}
+
+.friends-sidebar {
+  position: sticky;
+  top: 1rem;
+}
+
 .popoverTip {
   text-decoration: underline;
 }

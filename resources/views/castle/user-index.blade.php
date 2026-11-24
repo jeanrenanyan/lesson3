@@ -13,7 +13,26 @@
                 <a href="{{ route('users.index') }}">← Все пользователи</a>
                 <h1 class="h2 mt-2 mb-0">Замки пользователя {{ $user->username }}</h1>
             </div>
-            <a class="btn btn-outline-primary" href="{{ route('castles.index') }}">Все замки</a>
+            <div class="d-flex gap-2">
+                @auth
+                    @if ((int) auth()->id() !== (int) $user->id)
+                        @if ($isFriend)
+                            <form method="POST" action="{{ route('friends.destroy', $user->username) }}">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-outline-danger" type="submit">Удалить из друзей</button>
+                            </form>
+                        @else
+                            <form method="POST" action="{{ route('friends.store', $user->username) }}">
+                                @csrf
+                                <button class="btn btn-success" type="submit">Добавить в друзья</button>
+                            </form>
+                        @endif
+                    @endif
+                    <a class="btn btn-outline-primary" href="{{ route('feed.index') }}">Лента друзей</a>
+                @endauth
+                <a class="btn btn-outline-primary" href="{{ route('castles.index') }}">Все замки</a>
+            </div>
         </div>
         @if (auth()->check() && auth()->user()->is_admin)
             <p><a href="{{ route('admin.users.castles', $user->username) }}">Показать также удалённые замки</a></p>

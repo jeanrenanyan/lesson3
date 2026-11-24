@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\CastleController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FeedController;
+use App\Http\Controllers\FriendshipController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -23,8 +26,16 @@ Route::get('/users/{user:username}/castles', [CastleController::class, 'userInde
     ->name('users.castles');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/feed', [FeedController::class, 'index'])->name('feed.index');
+    Route::post('/users/{user:username}/friends', [FriendshipController::class, 'store'])
+        ->name('friends.store');
+    Route::delete('/users/{user:username}/friends', [FriendshipController::class, 'destroy'])
+        ->name('friends.destroy');
+
     Route::get('/castles/create', [CastleController::class, 'create'])->name('castles.create');
     Route::post('/castles', [CastleController::class, 'store'])->name('castles.store');
+    Route::post('/castles/{castle}/comments', [CommentController::class, 'store'])
+        ->name('comments.store');
 
     Route::get('/castles/{castle}/edit', [CastleController::class, 'edit'])
         ->middleware('can:update-castle,castle')

@@ -50,15 +50,20 @@ class CastleController extends Controller
     public function users()
     {
         $users = User::orderBy('username')->get();
+        $friendIds = auth()->check()
+            ? auth()->user()->friends()->pluck('users.id')->all()
+            : [];
 
-        return view('users.index', compact('users'));
+        return view('users.index', compact('users', 'friendIds'));
     }
 
     public function userIndex(User $user)
     {
         $castles = $user->castles()->with('user')->get();
+        $isFriend = auth()->check()
+            && auth()->user()->friends()->whereKey($user->id)->exists();
 
-        return view('castle.user-index', compact('castles', 'user'));
+        return view('castle.user-index', compact('castles', 'user', 'isFriend'));
     }
 
     public function userCastlesIncludingDeleted(User $user)
@@ -92,8 +97,12 @@ class CastleController extends Controller
     public function show(Castle $castle)
     {
         $castle->load('user');
+        $comments = $castle->comments()->with('user')->latest()->get();
+        $friendIds = auth()->check()
+            ? auth()->user()->friends()->pluck('users.id')->all()
+            : [];
 
-        return view('castle.show', compact('castle'));
+        return view('castle.show', compact('castle', 'comments', 'friendIds'));
     }
 
     public function edit(Castle $castle)
