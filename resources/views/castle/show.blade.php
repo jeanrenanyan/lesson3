@@ -10,7 +10,10 @@
 
 <body>
     <main class="container py-4">
-        <a href="{{ url('/castles') }}" class="btn btn-outline-primary mb-3">← К списку замков</a>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="{{ url('/castles') }}" class="btn btn-outline-primary">← К списку замков</a>
+            <x-profile-menu />
+        </div>
 
         <article class="card">
             <img src="{{ asset('storage/' . $castle->image) }}" alt="{{ $castle->name }}" class="card-img-top h-50">

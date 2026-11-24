@@ -11,10 +11,8 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h2 mb-0">Пользователи</h1>
             <div class="d-flex gap-2">
-                @auth
-                    <a class="btn btn-outline-primary" href="{{ route('feed.index') }}">Лента друзей</a>
-                @endauth
                 <a class="btn btn-outline-primary" href="{{ route('castles.index') }}">К замкам</a>
+                <x-profile-menu />
             </div>
         </div>
         <div class="list-group">

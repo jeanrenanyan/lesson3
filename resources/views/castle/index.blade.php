@@ -21,19 +21,10 @@
                         <p id="site_name">Замки Эстонии</p>
                     </div>
                     <div class="d-flex align-items-center gap-2 me-3">
-                        <a class="btn btn-outline-primary" href="{{ route('users.index') }}">Пользователи</a>
                         @auth
-                            <a class="btn btn-outline-primary" href="{{ route('feed.index') }}">Лента друзей</a>
                             <a class="btn btn-primary" href="{{ route('castles.create') }}">Добавить замок</a>
-                            <span class="text-muted">{{ Auth::user()->name }}</span>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button class="btn btn-outline-secondary" type="submit">Выйти</button>
-                            </form>
-                        @else
-                            <a class="btn btn-outline-primary" href="{{ route('login') }}">Войти</a>
-                            <a class="btn btn-primary" href="{{ route('register') }}">Регистрация</a>
                         @endauth
+                        <x-profile-menu />
                     </div>
                 </div>
             </nav>

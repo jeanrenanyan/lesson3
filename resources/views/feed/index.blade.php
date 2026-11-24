@@ -10,7 +10,10 @@
     <main class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h2 mb-0">Лента друзей</h1>
-            <a class="btn btn-outline-primary" href="{{ route('castles.index') }}">К замкам</a>
+            <div class="d-flex align-items-center gap-2">
+                <a class="btn btn-outline-primary" href="{{ route('castles.index') }}">К замкам</a>
+                <x-profile-menu />
+            </div>
         </div>
 
         @if (session('status'))

@@ -29,9 +29,9 @@
                             </form>
                         @endif
                     @endif
-                    <a class="btn btn-outline-primary" href="{{ route('feed.index') }}">Лента друзей</a>
                 @endauth
                 <a class="btn btn-outline-primary" href="{{ route('castles.index') }}">Все замки</a>
+                <x-profile-menu />
             </div>
         </div>
         @if (auth()->check() && auth()->user()->is_admin)

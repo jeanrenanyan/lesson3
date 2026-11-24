@@ -8,7 +8,10 @@
 </head>
 <body>
     <main class="container py-4">
-        <a class="btn btn-outline-primary mb-3" href="{{ route('castles.index') }}">← На главную</a>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a class="btn btn-outline-primary" href="{{ route('castles.index') }}">← На главную</a>
+            <x-profile-menu />
+        </div>
         <div class="form-panel">
             <h1 class="h2 mb-4">Добавить новый замок</h1>
             <form action="{{ route('castles.store') }}" method="post" enctype="multipart/form-data">

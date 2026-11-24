@@ -13,7 +13,10 @@
                 <a href="{{ route('users.castles', $user->username) }}">← Активные замки</a>
                 <h1 class="h2 mt-2 mb-0">Все замки пользователя {{ $user->username }}</h1>
             </div>
-            <a class="btn btn-outline-primary" href="{{ route('users.index') }}">Пользователи</a>
+            <div class="d-flex align-items-center gap-2">
+                <a class="btn btn-outline-primary" href="{{ route('users.index') }}">Пользователи</a>
+                <x-profile-menu />
+            </div>
         </div>
         <div class="list-group">
             @forelse ($castles as $castle)
