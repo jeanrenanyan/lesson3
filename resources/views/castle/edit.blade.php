@@ -1,52 +1,49 @@
-<button><a href="/castles/{{ $castle->id }}">На страницу замка</a></button>
-
-
-<h1>Изменить замок</h1>
-
-<form action="{{ url('/castles/' . $castle->id . '/edit') }}" method="post" enctype="multipart/form-data">
-
-    @method('PUT')
-    @csrf
-    <div>
-        <label for="name">Название</label>
-        <input type="text" name="name" autocomplete="off" value={{ old("name", $castle->name) }}>
-        @error('name')
-            <p style="color: red;">{{$message}}</p>
-        @enderror
-    </div>
-
-    <div>
-        <label for="description">Описание</label>
-        <input type="text" name="description" autocomplete="off" value={{ old("description", $castle->description) }}>
-        @error('description') <p style=" color: red;">{{$message}}</p>
-        @enderror
-    </div>
-
-    <div>
-        <label for="type">Тип</label>
-        <input type="text" name="type" autocomplete="off" value={{ old("type", $castle->type) }}>
-        @error('type') <p style=" color: red;">{{$message}}</p>
-        @enderror
-    </div>
-
-    <div>
-        <label for="full_description">Полное описание</label>
-        <input type="text" name="full_description" autocomplete="off" value={{ old("full_description", $castle->full_description) }}>
-        @error('full_description') <p style=" color: red;">{{$message}}</p>
-        @enderror
-    </div>
-
-    <div>
-        <label for="image">Изображение</label>
-        <div>
-            <img src="{{ asset('storage/' . $castle->image) }}" alt="{{ $castle->name }}" style="max-width: 300px;">
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ mix('css/styles.css') }}">
+    <title>Редактировать замок — Замки Эстонии</title>
+</head>
+<body>
+    <main class="container py-4">
+        <a class="btn btn-outline-primary mb-3" href="{{ route('castles.show', $castle) }}">← К замку</a>
+        <div class="form-panel">
+            <h1 class="h2 mb-4">Изменить замок</h1>
+            <form action="{{ route('castles.update', $castle) }}" method="post" enctype="multipart/form-data">
+                @method('PUT')
+                @csrf
+                <div class="mb-3">
+                    <label class="form-label" for="name">Название</label>
+                    <input class="form-control" id="name" type="text" name="name" value="{{ old('name', $castle->name) }}" required>
+                    @error('name') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="description">Краткое описание</label>
+                    <textarea class="form-control" id="description" name="description" rows="2" required>{{ old('description', $castle->description) }}</textarea>
+                    @error('description') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="type">Тип</label>
+                    <input class="form-control" id="type" type="text" name="type" value="{{ old('type', $castle->type) }}" required>
+                    @error('type') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="full_description">Полное описание</label>
+                    <textarea class="form-control" id="full_description" name="full_description" rows="5" required>{{ old('full_description', $castle->full_description) }}</textarea>
+                    @error('full_description') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                </div>
+                <div class="mb-4">
+                    <label class="form-label" for="image">Изображение</label>
+                    <img class="d-block img-thumbnail mb-2" src="{{ asset('storage/' . $castle->image) }}" alt="{{ $castle->name }}" style="max-width: 300px;">
+                    <input class="form-control" id="image" type="file" name="image" accept="image/*">
+                    <div class="form-text">Чтобы оставить текущую картинку, не выбирайте новый файл.</div>
+                    @error('image') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                </div>
+                <button class="btn btn-primary" type="submit">Сохранить</button>
+            </form>
         </div>
-        <input type="file" name="image" accept="image/*" autocomplete="off">
-        <small>Чтобы оставить текущую картинку, не выбирайте новый файл.</small>
-        @error('image') <p style=" color: red;">{{$message}}</p>
-        @enderror
-    </div>
-
-    <button>Обновить</button>
-
-</form>
+    </main>
+</body>
+</html>

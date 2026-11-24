@@ -62,3 +62,29 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Замки Эстонии
+
+Для локального запуска миграций и сборки стилей выполните:
+
+```bash
+php artisan migrate
+npm run dev
+```
+
+Пользователи регистрируются через `/register`, список пользователей доступен по `/users`, а замки пользователя — по `/users/{username}/castles`. Новые замки автоматически связываются с вошедшим пользователем. Владельцы и администраторы могут редактировать и мягко удалять замки; администратор также может просматривать удалённые замки, восстанавливать их и удалять окончательно.
+
+Чтобы выдать права администратора зарегистрированному пользователю, выполните в Tinker:
+
+```php
+App\Models\User::where('username', 'имя-пользователя')->firstOrFail()->update(['is_admin' => true]);
+```
+
+Чтобы связать уже существующий замок с пользователем:
+
+```php
+$user = App\Models\User::where('username', 'имя-пользователя')->firstOrFail();
+$castle = App\Models\Castle::findOrFail(1);
+$castle->user()->associate($user);
+$castle->save();
+```

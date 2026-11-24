@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Castle;
-use Validator;
-
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 
 class CastleController extends Controller
 {
@@ -40,38 +42,57 @@ class CastleController extends Controller
 
     public function index()
     {
-        $castles = Castle::all();
+        $castles = Castle::with('user')->get();
 
-        return view('castle.index', compact("castles"));
+        return view('castle.index', compact('castles'));
     }
+
+    public function users()
+    {
+        $users = User::orderBy('username')->get();
+
+        return view('users.index', compact('users'));
+    }
+
+    public function userIndex(User $user)
+    {
+        $castles = $user->castles()->with('user')->get();
+
+        return view('castle.user-index', compact('castles', 'user'));
+    }
+
+    public function userCastlesIncludingDeleted(User $user)
+    {
+        $castles = $user->castles()->withTrashed()->with('user')->get();
+
+        return view('castle.admin-user-index', compact('castles', 'user'));
+    }
+
     public function create()
     {
         return view('castle.create');
     }
-    public function store()
-    {
 
-        $validator = Validator::make(request()->all(), $this->rules, $this->messages, $this->attributes);
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), $this->rules, $this->messages, $this->attributes);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $data = $validator->validated();
+        $data['image'] = $data['image']->store('', 'public');
 
-        $imageFile = $data['image'];
+        $request->user()->castles()->create($data);
 
-        $path = $imageFile->store('', 'public');
-
-        $data["image"] = $path;
-
-        Castle::create($data);
-
-        return redirect('/castles');
+        return redirect()->route('castles.index');
     }
 
     public function show(Castle $castle)
     {
+        $castle->load('user');
+
         return view('castle.show', compact('castle'));
     }
 
@@ -80,12 +101,12 @@ class CastleController extends Controller
         return view('castle.edit', compact('castle'));
     }
 
-    public function update(Castle $castle)
+    public function update(Request $request, Castle $castle)
     {
         $rules = $this->rules;
         $rules['image'] = 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048';
 
-        $validator = Validator::make(request()->all(), $rules, $this->messages, $this->attributes);
+        $validator = Validator::make($request->all(), $rules, $this->messages, $this->attributes);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
@@ -95,18 +116,39 @@ class CastleController extends Controller
 
         if (isset($data['image'])) {
             $data['image'] = $data['image']->store('', 'public');
+        } else {
+            unset($data['image']);
         }
 
         $castle->update($data);
 
-        return redirect('/castles');
+        return redirect()->route('castles.show', $castle);
     }
 
-     public function destroy(Castle $castle)
+    public function destroy(Castle $castle)
     {
+        Gate::authorize('delete-castle', $castle);
         $castle->delete();
 
-        return redirect('/castles');
+        return redirect()->route('castles.index');
     }
 
+    public function restore($castleId)
+    {
+        $castle = Castle::withTrashed()->findOrFail($castleId);
+        Gate::authorize('restore-castle', $castle);
+        $castle->restore();
+
+        return redirect()->route('admin.users.castles', $castle->user->username);
+    }
+
+    public function forceDelete($castleId)
+    {
+        $castle = Castle::withTrashed()->findOrFail($castleId);
+        Gate::authorize('force-delete-castle', $castle);
+        $username = $castle->user->username;
+        $castle->forceDelete();
+
+        return redirect()->route('admin.users.castles', $username);
+    }
 }

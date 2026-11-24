@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers;
+
 use App\Http\Controllers\CastleController;
 
 use Illuminate\Support\Facades\Route;
@@ -17,19 +17,37 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/castles');
 
-Route::get('/castles', [CastleController::class, 'index']);
+Route::get('/castles', [CastleController::class, 'index'])->name('castles.index');
+Route::get('/users', [CastleController::class, 'users'])->name('users.index');
+Route::get('/users/{user:username}/castles', [CastleController::class, 'userIndex'])
+    ->name('users.castles');
 
-Route::get('/castles/create', [CastleController::class, 'create']);
+Route::middleware('auth')->group(function () {
+    Route::get('/castles/create', [CastleController::class, 'create'])->name('castles.create');
+    Route::post('/castles', [CastleController::class, 'store'])->name('castles.store');
 
-Route::post('/castles', [CastleController::class, 'store']);
+    Route::get('/castles/{castle}/edit', [CastleController::class, 'edit'])
+        ->middleware('can:update-castle,castle')
+        ->name('castles.edit');
+    Route::put('/castles/{castle}/edit', [CastleController::class, 'update'])
+        ->middleware('can:update-castle,castle')
+        ->name('castles.update');
+    Route::delete('/castles/{castle}', [CastleController::class, 'destroy'])
+        ->middleware('can:delete-castle,castle')
+        ->name('castles.destroy');
 
-Route::get('/castles/{castle}', [CastleController::class, 'show']);
+    Route::get('/admin/users/{user:username}/castles', [CastleController::class, 'userCastlesIncludingDeleted'])
+        ->middleware('can:admin')
+        ->name('admin.users.castles');
+    Route::post('/admin/castles/{castle}/restore', [CastleController::class, 'restore'])
+        ->middleware('can:admin')
+        ->name('admin.castles.restore');
+    Route::delete('/admin/castles/{castle}/force', [CastleController::class, 'forceDelete'])
+        ->middleware('can:admin')
+        ->name('admin.castles.force-delete');
+});
 
-Route::get('/castles/{castle}/edit', [CastleController::class, 'edit']);
-
-Route::put('/castles/{castle}/edit', [CastleController::class, 'update']);
-
-Route::delete('/castles/{castle}', [CastleController::class, 'destroy']);
+Route::get('/castles/{castle}', [CastleController::class, 'show'])->name('castles.show');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

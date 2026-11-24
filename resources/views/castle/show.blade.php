@@ -19,19 +19,28 @@
                 <p class="text-muted mb-1">{{ $castle->type ?: 'Замок' }}</p>
                 <h1 class="card-title">{{ $castle->name }}</h1>
                 <p class="lead">{{ $castle->description }}</p>
+                @if ($castle->user)
+                    <p class="text-muted">Автор:
+                        <a href="{{ route('users.castles', $castle->user->username) }}">{{ $castle->user->username }}</a>
+                    </p>
+                @endif
                 <div class="card-text">
                     {{ $castle->full_description }}
                 </div>
 
                 <div class="d-flex flex-wrap gap-2 mt-4">
-                    <a href="/castles/{{ $castle->id }}/edit">
-                        <button type="button" class="btn btn-secondary" disabled>Изменить</button>
-                    </a>
-                    <form action="/castles/{{ $castle->id }}" method="post" style="display: inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Удалить</button>
-                    </form>
+                    @auth
+                        @can('update-castle', $castle)
+                            <a class="btn btn-secondary" href="{{ route('castles.edit', $castle) }}">Изменить</a>
+                        @endcan
+                        @can('delete-castle', $castle)
+                            <form action="{{ route('castles.destroy', $castle) }}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">Удалить</button>
+                            </form>
+                        @endcan
+                    @endauth
                 </div>
             </div>
         </article>

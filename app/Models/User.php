@@ -12,8 +12,14 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'is_admin' => 'boolean',
     ];
 
     protected $hidden = [
@@ -21,11 +27,8 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected function casts(): array
+    public function castles()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(Castle::class);
     }
 }

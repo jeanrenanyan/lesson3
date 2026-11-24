@@ -15,14 +15,25 @@
             <nav class="navbar navbar-expand-lg bg-body-tertiary p-0">
                 <div class="container-fluid" id="header_container">
                     <div class="logo">
-                        <a href="#">
+                        <a href="{{ route('castles.index') }}">
                             <div>Э</div>
                         </a>
                         <p id="site_name">Замки Эстонии</p>
                     </div>
-                    <a href="/castles/create">
-                        <button class="btn btn-primary" class="button">Загрузить</button>
-                    </a>
+                    <div class="d-flex align-items-center gap-2 me-3">
+                        <a class="btn btn-outline-primary" href="{{ route('users.index') }}">Пользователи</a>
+                        @auth
+                            <a class="btn btn-primary" href="{{ route('castles.create') }}">Добавить замок</a>
+                            <span class="text-muted">{{ Auth::user()->name }}</span>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button class="btn btn-outline-secondary" type="submit">Выйти</button>
+                            </form>
+                        @else
+                            <a class="btn btn-outline-primary" href="{{ route('login') }}">Войти</a>
+                            <a class="btn btn-primary" href="{{ route('register') }}">Регистрация</a>
+                        @endauth
+                    </div>
                 </div>
             </nav>
         </header>
@@ -38,15 +49,32 @@
                                 <div class="card-body d-flex flex-column">
                                     <h2 class="card-title">{{ $castle->name }}</h2>
                                     <h3 class="card-text">{{ $castle->description }}</h3>
+                                    @if ($castle->user)
+                                        <p class="small text-muted">Автор:
+                                            <a href="{{ route('users.castles', $castle->user->username) }}">{{ $castle->user->username }}</a>
+                                        </p>
+                                    @endif
                                     <a href="{{ url('/castles/' . $castle->id) }}"
                                         class="button-more btn btn-primary mt-auto align-self-end">
                                         Подробнее</a>
+                                    @auth
+                                        @can('update-castle', $castle)
+                                            <a class="btn btn-outline-secondary mt-2" href="{{ route('castles.edit', $castle) }}">Редактировать</a>
+                                        @endcan
+                                        @can('delete-castle', $castle)
+                                            <form class="mt-2" action="{{ route('castles.destroy', $castle) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-outline-danger w-100" type="submit">Удалить</button>
+                                            </form>
+                                        @endcan
+                                    @endauth
                                 </div>
                                 <div id="object-type">{{ $castle->type ?? "Замок" }}</div>
                             </div>
                         </div>
                     @empty
-                        <li>Замки не были найдены!</li>
+                        <p class="text-center text-muted">Замки не найдены.</p>
                     @endforelse
 
                 </div>
